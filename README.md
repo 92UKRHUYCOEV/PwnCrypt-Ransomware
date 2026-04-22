@@ -14,10 +14,15 @@ Microsoft Defender for Endpoint | Advanced Hunting (KQL) | documents a full rans
 
 This project documents a full ransomware investigation into PwnCrypt, a PowerShell-based threat that encrypts files and simulates real-world ransomware behavior.
 
-🖼️ PwnCrypt Attack Chain (Visual Overview)
----
+## 🔗 PwnCrypt Attack Chain (Visual Overview)
 
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/4e73dd10-4eb7-41e5-a783-5d5e9b38fe1c" />
+
+---
+
+## 🔗 Investigation Flow Diagram
+
+<img width="500" height="600" alt="Investigative Flow_GOOD" src="https://github.com/user-attachments/assets/aef72ff3-1f61-4733-86df-d7f95eac9b36" />
 
 This attack demonstrates how legitimate tools (PowerShell) can be abused to execute ransomware, bypass security controls, and impact user data within seconds.
 - PowerShell used as the execution engine  
@@ -26,11 +31,13 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 - File encryption and renaming (.pwncrypt)  
 - Ransom note creation  
 
+---
 
-## 🔗 Multiple files with .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
+## 🔗🔴 Multiple files with .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
 
 <img width="1715" height="511" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
 
+📝 Rapid file activity confirms automated encryption behavior typical of ransomware.
 ---
 
 🔬 Process Attribution (Root Cause)
@@ -52,15 +59,15 @@ File events reveal PowerShell as the initiating process, confirming script-based
 
 ---
 
-⏱️ 4. Timeline Correlation
+⏱️🧠 Timeline Correlation
 
 🧠 Highlight
 Cluster of events within seconds
 File creation burst
 Matching timestamps across logs
 
-📝 Caption
-Rapid file activity confirms automated encryption behavior typical of ransomware.
+
+
 
 🎯 How to Annotate Screenshots (IMPORTANT)
 Use any of these tools:
@@ -87,6 +94,7 @@ Make it look like this ✅:
 [ 🔴 powershell.exe ]  → Root cause
 [ 🔴 .pwncrypt files ] → Encryption evidence
 [ 🔴 ExecutionPolicy Bypass ] → Defense evasion
+
 📂 Screenshots Folder Structure
 /screenshots
 │
@@ -125,24 +133,21 @@ PowerShell execution
 ---
 
 
-
-
 💡 Confirm Timeline of Infection
 
 <img width="503" height="200" alt="image" src="https://github.com/user-attachments/assets/9b501cdb-42f1-4852-b956-2a16d323bf04" />
 
 ---
 
-
-🔗 Investigation Summary
+🔗🔴 Investigation Summary
 
 The investigation followed a structured evidence-based approach:
 
-Detection – Identified .pwncrypt file artifacts
-Attribution – Linked file activity to powershell.exe
-Execution Analysis – Confirmed use of execution policy bypass
-Validation – Correlated process logs with file activity
-Conclusion – Established root cause as malicious script execution
+- Detection – Identified .pwncrypt file artifacts
+- Attribution – Linked file activity to powershell.exe
+- Execution Analysis – Confirmed use of execution policy bypass
+- Validation – Correlated process logs with file activity
+- Conclusion – Established root cause as malicious script execution
 
 ---
 
@@ -150,9 +155,8 @@ Conclusion – Established root cause as malicious script execution
 
 This incident highlights a common modern attack pattern:
 
-Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
-
-Detection strategies must therefore prioritize behavioral monitoring over static indicators.
+--Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
+--Detection strategies must therefore prioritize behavioral monitoring over static indicators.
 
 
 
