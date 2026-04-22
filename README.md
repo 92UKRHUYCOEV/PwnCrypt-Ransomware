@@ -134,7 +134,25 @@ PowerShell execution
 ---
 
 
+🔗 Investigation Summary
 
+The investigation followed a structured evidence-based approach:
+
+Detection – Identified .pwncrypt file artifacts
+Attribution – Linked file activity to powershell.exe
+Execution Analysis – Confirmed use of execution policy bypass
+Validation – Correlated process logs with file activity
+Conclusion – Established root cause as malicious script execution
+
+---
+
+💡 Analyst Note
+
+This incident highlights a common modern attack pattern:
+
+Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
+
+Detection strategies must therefore prioritize behavioral monitoring over static indicators.
 
 
 
