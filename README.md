@@ -22,7 +22,7 @@ This project documents a full ransomware investigation into PwnCrypt, a PowerShe
 
 ## 🔗 Investigation Flow Diagram
 
-<img width="500" height="600" alt="Investigative Flow_GOOD" src="https://github.com/user-attachments/assets/aef72ff3-1f61-4733-86df-d7f95eac9b36" />
+<img width="400" height="600" alt="Investigative Flow_GOOD" src="https://github.com/user-attachments/assets/aef72ff3-1f61-4733-86df-d7f95eac9b36" />
 
 This attack demonstrates how legitimate tools (PowerShell) can be abused to execute ransomware, bypass security controls, and impact user data within seconds.
 - PowerShell used as the execution engine  
