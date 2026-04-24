@@ -37,7 +37,7 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 
 ## 🔴Attack-generated files with the .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
 <p align="center">
-<img width="1715" height="511" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
+<img width="1715" height="611" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
 </p>
 
 # 🔴 Root Cause
@@ -84,13 +84,16 @@ This incident highlights a common modern attack pattern:
 
 💡 Identify the Device
 
-<img width="433" height="102" alt="image" src="https://github.com/user-attachments/assets/7852e423-e3f2-4d9b-8197-a78887c4f31e" />
+<p align="center">
+<img width="633" height="200" alt="image" src="https://github.com/user-attachments/assets/7852e423-e3f2-4d9b-8197-a78887c4f31e" />
+</p>
 
 ---
 
 💡 Confirm Initiating Process and Command Line
-
+<p align="center">
 <img width="1427" height="178" alt="image" src="https://github.com/user-attachments/assets/d7022fc7-3dbe-4fa4-8f08-5d071dc515b4" />
+</p>
 
 ---
 
