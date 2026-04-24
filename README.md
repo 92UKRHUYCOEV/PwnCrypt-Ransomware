@@ -15,14 +15,16 @@ Microsoft Defender for Endpoint | Advanced Hunting (KQL) | documents a full rans
 This project documents a full ransomware investigation into PwnCrypt, a PowerShell-based threat that encrypts files and simulates real-world ransomware behavior.
 
 ## 🔗 PwnCrypt Attack Chain (Visual Overview)
-
+<p align="center">
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/4e73dd10-4eb7-41e5-a783-5d5e9b38fe1c" />
+</p>
 
 ---
 
 ## 🔗 Investigation Flow Diagram
-
-<img width="400" height="600" alt="Investigative Flow_GOOD" src="https://github.com/user-attachments/assets/aef72ff3-1f61-4733-86df-d7f95eac9b36" />
+<p align="center">
+<img width="1024" height="1536" alt="PwnCrypt Ransomware TH_contrast adjst_04-23-26" src="https://github.com/user-attachments/assets/69ce393d-423a-488d-8113-eb3250eb5e12" />
+</p>
 
 This attack demonstrates how legitimate tools (PowerShell) can be abused to execute ransomware, bypass security controls, and impact user data within seconds.
 - PowerShell used as the execution engine  
@@ -34,21 +36,18 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 ---
 
 ## 🔗🔴 Multiple files with .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
-
+<p align="center">
 <img width="1715" height="511" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
+</p>
 
 📝 Rapid file activity confirms automated encryption behavior typical of ransomware.
 ---
 
 🔬 Process Attribution (Root Cause)
 
-🧠 InitiatingProcessFileName = powershell.exe
-Command line showing:  
-ExecutionPolicy Bypass
-pwncrypt.ps1
-
-📝 Caption
-File events reveal PowerShell as the initiating process, confirming script-based ransomware execution.
+- InitiatingProcessFileName = powershell.exe
+- Command line showing:  ExecutionPolicy Bypass and pwncrypt.ps1 script reference
+- File events reveal PowerShell as the initiating process, confirming script-based ransomware execution.
 
 ---
 
@@ -103,20 +102,6 @@ Make it look like this ✅:
 ├── 03_command_line.png
 ├── 04_timeline.png
 🚀 Pro-Level Upgrade (Optional)
-
-If you want to go even further:
-
-Add Before/After Section
-Before Infection
-No .pwncrypt files
-Normal activity
-After Infection
-Mass file creation
-PowerShell execution
-
-## 🔗 Investigation Flow Diagram
-
-<img width="500" height="600" alt="Investigative Flow_GOOD" src="https://github.com/user-attachments/assets/aef72ff3-1f61-4733-86df-d7f95eac9b36" />
 
 ---
 
