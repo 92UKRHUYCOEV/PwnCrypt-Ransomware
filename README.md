@@ -35,7 +35,7 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 
 ---
 
-## 🔴Attack-generated files with the .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
+### 🔴Attack-generated files with the .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
 <p align="center">
 <img width="1715" height="611" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
 </p>
