@@ -58,16 +58,28 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 
 ---
 
-⏱️🧠 Timeline Correlation
+🔗🔴 Attack Timeline – Full Lifecycle
 
-🧠 Highlight
-Cluster of events within seconds
-File creation burst
-Matching timestamps across logs
+| Time | Stage | Event | Data Source | Evidence |
+|:-----|:------|:------|:------------|:---------|
+| Day 1 – 08:24 AM | Initial Access | User logs in from unfamiliar IP/location | SigninLogs | Successful login without MFA |
+| Day 1 – 08:35 AM | Initial Access | Authentication completed using single-factor | SigninLogs | AuthenticationRequirement = singleFactorAuthentication |
+| Day 1 – 09:02 AM | Initial Access | Conditional Access marked as success | SigninLogs | ConditionalAccessStatus = success |
+| Day 1 – 09:15 AM | Initial Access | Attacker establishes foothold | SigninLogs | Repeated successful logins |
+| Day 2 – 10:12 AM | Lateral Movement | Internal system discovery begins | DeviceProcessEvents | Suspicious process activity |
+| Day 2 – 10:28 AM | Lateral Movement | Remote execution initiated (PowerShell/PsExec) | DeviceProcessEvents | CommandLine contains remote execution |
+| Day 2 – 11:03 AM | Lateral Movement | Same account accesses multiple systems | DeviceProcessEvents | AccountName across multiple DeviceNames |
+| Day 2 – 01:47 PM | Lateral Movement | Privilege expansion / admin share usage | DeviceProcessEvents | Evidence of admin-level commands |
+| Day 3 – 08:11 AM | Impact | Malicious script executed (pwncrypt.ps1) | DeviceProcessEvents | PowerShell execution with script |
+| Day 3 – 08:12 AM | Impact | File encryption begins | DeviceFileEvents | Files renamed with .pwncrypt |
+| Day 3 – 08:18 AM | Impact | Ransom note created | DeviceFileEvents | Decryption instructions file |
+| Day 3 – 08:24 AM | Impact | Security alert triggered | Alerts/Incidents | Ransomware behavior detected |
 
+[ 🔴 powershell.exe ] → ➡️Root cause [ 🔴 .pwncrypt files ] → ➡️Encryption evidence [ 🔴 ExecutionPolicy Bypass ] → ➡️Defense evasion
 
+---
 
-
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 🎯 How to Annotate Screenshots (IMPORTANT)
 Use any of these tools:
 
@@ -102,7 +114,7 @@ Make it look like this ✅:
 ├── 03_command_line.png
 ├── 04_timeline.png
 🚀 Pro-Level Upgrade (Optional)
-
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ---
 
 💡 Identify the Device
@@ -136,12 +148,30 @@ The investigation followed a structured evidence-based approach:
 
 ---
 
+
+🔗🔴MITRE ATT&CK Mapping – Full Attack Lifecycle
+     🧬  Mapped using the MITRE ATT&CK framework
+
+| Stage            | Tactic              | Technique ID | Technique Name                | How It Appears in Your Lab                       |
+|:-----------------|:--------------------|:-------------|:------------------------------|:-------------------------------------------------|
+| Identity         | Initial Access      | T1078        | Valid Accounts                | Attacker logs in using legitimate credentials    |
+| Identity         | Credential Access   | T1110        | Brute Force (optional)        | Multiple login attempts (if observed)            |
+| Identity         | Defense Evasion     | T1556        | Modify Authentication Process | MFA bypass / Conditional Access misconfiguration |
+| Lateral Movement | Lateral Movement    | T1021        | Remote Services               | Remote execution (PsExec, WMI, PowerShell)       |
+| Lateral Movement | Execution           | T1059.001    | PowerShell                    | PowerShell used for remote commands              |
+| Lateral Movement | Persistence         | T1569        | System Services               | Remote service execution (PsExec behavior)       |
+| Lateral Movement | Credential Access   | T1078        | Valid Accounts                | Same account used across multiple devices        |
+| Ransomware       | Execution           | T1059.001    | PowerShell                    | Script execution (pwncrypt.ps1)                  |
+| Ransomware       | Impact              | T1486        | Data Encrypted for Impact     | Files encrypted with .pwncrypt extension         |
+| Ransomware       | Defense Evasion     | T1070        | Indicator Removal (optional)  | Cleanup behavior (if observed/logged)            |
+
+---
+
 💡 Analyst Note
 
 This incident highlights a common modern attack pattern:
-
---Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
---Detection strategies must therefore prioritize behavioral monitoring over static indicators.
+- Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
+- Detection strategies must therefore prioritize behavioral monitoring over static indicators.
 
 
 
