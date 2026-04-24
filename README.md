@@ -101,6 +101,8 @@ This incident highlights a common modern attack pattern:
 
 <img width="503" height="200" alt="image" src="https://github.com/user-attachments/assets/9b501cdb-42f1-4852-b956-2a16d323bf04" />
 
+The provided timestamp in the lab instructions did not align with the dataset. Instead, timestamps were derived directly from observed .pwncrypt file events. Using these timestamps, process events were correlated, confirming that powershell.exe executed the ransomware script within the observed timeframe.
+
 ---
 
 🔗🔴 Investigation Summary
