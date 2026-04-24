@@ -10,18 +10,18 @@ Microsoft Defender for Endpoint | Advanced Hunting (KQL) | documents a full rans
   <img src="https://img.shields.io/badge/Status-Resolved-success?style=for-the-badge&logo=checkmarx&logoColor=white" />
 </p>
 
-📌 Overview
+## 📌 Overview
 
 This project documents a full ransomware investigation into PwnCrypt, a PowerShell-based threat that encrypts files and simulates real-world ransomware behavior.
 
-## 🔗 PwnCrypt Attack Chain (Visual Overview)
+## PwnCrypt Attack Chain (Visual Overview)
 <p align="center">
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/4e73dd10-4eb7-41e5-a783-5d5e9b38fe1c" />
 </p>
 
 ---
 
-## 🔗 Investigation Flow Diagram
+## Investigation Flow Diagram
 <p align="center">
 <img width="1024" height="1536" alt="PwnCrypt Ransomware TH_contrast adjst_04-23-26" src="https://github.com/user-attachments/assets/69ce393d-423a-488d-8113-eb3250eb5e12" />
 </p>
@@ -35,30 +35,33 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 
 ---
 
-## 🔗🔴 Multiple files with .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
+## 🔴Attack-generated files with the .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
 <p align="center">
 <img width="1715" height="511" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
 </p>
 
-📝 Rapid file activity confirms automated encryption behavior typical of ransomware.
----
+# 🔴 Root Cause
 
-🔬 Process Attribution (Root Cause)
+## Command-Line Evidence
+- powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\pwncrypt.ps1
+- Execution policy bypass allowed the malicious script to run without restriction.
 
 - InitiatingProcessFileName = powershell.exe
 - Command line showing:  ExecutionPolicy Bypass and pwncrypt.ps1 script reference
+- Elevated file modification rates indicate automated encryption activity consistent with ransomware behavior.
 - File events reveal PowerShell as the initiating process, confirming script-based ransomware execution.
 
 ---
 
-## 🔴 Command-Line Evidence
-📝 powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\pwncrypt.ps1
-
-📝 Execution policy bypass allowed the malicious script to run without restriction.
+## Future Preventitive Measurses
+This incident highlights a common modern attack pattern:
+- Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
+- Detection strategies must therefore prioritize behavioral monitoring over static indicators.
+- Strengthen MFA detection and action
 
 ---
 
-🔗🔴 Attack Timeline – Full Lifecycle
+## Attack Timeline – Full Lifecycle
 
 | Time | Stage | Event | Data Source | Evidence |
 |:-----|:------|:------|:------------|:---------|
@@ -79,44 +82,6 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 
 ---
 
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-🎯 How to Annotate Screenshots (IMPORTANT)
-Use any of these tools:
-
-Snipping Tool (Windows)
-PowerPoint (best for clean arrows)
-Paint / Paint.NET
-Canva (cleanest visuals)
-🔥 Best Practice (What Recruiters Notice)
-
-Add:
-
-🔴 Red boxes → key evidence
-➡️ Arrows → point to fields
-📝 Small labels:
-“IOC: .pwncrypt”
-“Process: powershell.exe”
-“Execution Bypass”
-🧾 Example Annotation Style
-
-Instead of raw screenshot ❌
-Make it look like this ✅:
-
-[ 🔴 powershell.exe ]  → Root cause
-[ 🔴 .pwncrypt files ] → Encryption evidence
-[ 🔴 ExecutionPolicy Bypass ] → Defense evasion
-
-📂 Screenshots Folder Structure
-/screenshots
-│
-├── 01_file_events.png
-├── 02_process_attribution.png
-├── 03_command_line.png
-├── 04_timeline.png
-🚀 Pro-Level Upgrade (Optional)
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
----
-
 💡 Identify the Device
 
 <img width="433" height="102" alt="image" src="https://github.com/user-attachments/assets/7852e423-e3f2-4d9b-8197-a78887c4f31e" />
@@ -128,7 +93,6 @@ Make it look like this ✅:
 <img width="1427" height="178" alt="image" src="https://github.com/user-attachments/assets/d7022fc7-3dbe-4fa4-8f08-5d071dc515b4" />
 
 ---
-
 
 💡 Confirm Timeline of Infection
 
@@ -146,11 +110,15 @@ The investigation followed a structured evidence-based approach:
 - Validation – Correlated process logs with file activity
 - Conclusion – Established root cause as malicious script execution
 
+🔗🔴 Why did this happen?
+	• Identity → MFA not enforced
+	• Lateral → valid credentials abused
+ 	• Ransomware → PowerShell script execution
+
 ---
 
-
-🔗🔴MITRE ATT&CK Mapping – Full Attack Lifecycle
-     🧬  Mapped using the MITRE ATT&CK framework
+🔗🔴 MITRE ATT&CK Mapping – Full Attack Lifecycle
+   ####  Mapped using the MITRE ATT&CK framework
 
 | Stage            | Tactic              | Technique ID | Technique Name                | How It Appears in Your Lab                       |
 |:-----------------|:--------------------|:-------------|:------------------------------|:-------------------------------------------------|
@@ -166,30 +134,3 @@ The investigation followed a structured evidence-based approach:
 | Ransomware       | Defense Evasion     | T1070        | Indicator Removal (optional)  | Cleanup behavior (if observed/logged)            |
 
 ---
-
-💡 Analyst Note
-
-This incident highlights a common modern attack pattern:
-- Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
-- Detection strategies must therefore prioritize behavioral monitoring over static indicators.
-
-
-
-
-You:
-
-Tell a visual story
-Highlight evidence clearly
-Show analyst thinking
-
-
-👉 That’s what gets attention.
-
-🧾 Final Tip
-
-Your README should answer this visually in under 10 seconds:
-
-“What happened, how do you know, and why does it matter?”
-
-If your screenshots + captions do that → you’re at SOC-ready level.
-
