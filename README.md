@@ -104,6 +104,7 @@ We began by reviewing process executions around the suspected timeframe.
 
 let t = datetime(2024-10-16T05:24:46.8334943Z);
 DeviceProcessEvents
+| where TimeGenerated between (datetime(2026-02-25 21:00:00) .. datetime(2026-02-26 00:00:00))
 | where Timestamp between (t - 5m .. t + 5m)
 | order by Timestamp desc
 
