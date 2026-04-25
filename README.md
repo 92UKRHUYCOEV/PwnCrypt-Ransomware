@@ -99,26 +99,37 @@ The following MDE tables were used:
 ---
 
 ## 🔍 Investigation Steps
-1. Identify Suspicious Process Activity
-We began by reviewing process executions around the suspected timeframe.
+```markdown
+Purpose: Identify first and last observed ransomware file activity
+Reviewed process execution within the suspected timeframe to establish initial and final indicators.
 
-let t = datetime(2024-10-16T05:24:46.8334943Z);
-DeviceProcessEvents
-| where TimeGenerated between (datetime(2026-02-25 21:00:00) .. datetime(2026-02-26 00:00:00))
-| where Timestamp between (t - 5m .. t + 5m)
-| order by Timestamp desc
+### 🔍 KQL Query
 
-🔎 Purpose:
-Identify unusual processes
-Detect script execution (PowerShell, cmd)
-Spot known ransomware tools or loaders
+```kql
+DeviceFileEvents
+| where FileName contains "pwncrypt"
+| where DeviceName == "windows-target-"
+| summarize 
+    FirstSeen = min(Timestamp),
+    LastSeen  = max(Timestamp)
+    by DeviceName
+```
 
-2. Look for Ransomware Execution Indicators
-Common ransomware behaviors include:
+<img width="571" height="199" alt="image" src="https://github.com/user-attachments/assets/d6451a31-d8ab-4b8b-b754-f48346dca583" />
 
-Use of scripting engines
-File encryption tools
-Shadow copy deletion
+---
+
+## 🔍 Look for Common Ransomware Indicators
+```markdown
+Process execution analysis identified commands associated with ransomware staging,
+including shadow copy deletion and backup removal. The presence of PowerShell
+and command-line activity further indicates the use of legitimate tools to
+execute malicious actions. These behaviors strongly correlate with pre-encryption
+activity commonly observed in ransomware attacks.
+
+### 🔍 KQL Query
+
+```kql
 DeviceProcessEvents
 | where ProcessCommandLine has_any (
     "vssadmin delete shadows",
@@ -129,10 +140,18 @@ DeviceProcessEvents
     "cmd.exe"
 )
 | order by Timestamp desc
+```
 
-🔎 Findings:
-Evidence of destructive commands may indicate pre-encryption staging
-Shadow copy deletion strongly correlates with ransomware activity
+<img width="1240" height="144" alt="PERUSE22" src="https://github.com/user-attachments/assets/f4f6c329-b0ea-4fcd-b7b1-5b00941d6353" />
+
+---
+
+🚨 Why These Commands Matter
+1. vssadmin delete shadows → Deletes shadow copies (prevents file recovery)
+2. wbadmin delete catalog → Removes backup catalog
+3. bcdedit /set → Can disable recovery/boot protections
+4. cipher /w → Wipes free space (anti-forensics)
+5. powershell / cmd.exe → Common execution tools (LOLBins)
 
 ---
 
@@ -319,8 +338,16 @@ Detection rules should focus on behavior, not just signatures
 
 This investigation revealed multiple indicators consistent with ransomware activity, including process execution patterns, file system changes, and possible attacker movement across the network.
 
+---
+
+✍️ Author Notes
+
+This report represents a structured threat hunting workflow designed to simulate real-world ransomware detection and analysis using Microsoft Defender for Endpoint.
+
 While full confirmation of encryption depends on additional forensic validation, the observed behaviors strongly suggest ransomware impact or pre-encryption staging.
 
 Strengthening detection logic and response readiness will significantly reduce risk in future incidents.
+
+---
 
 
