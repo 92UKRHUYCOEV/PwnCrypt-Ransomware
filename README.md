@@ -64,17 +64,6 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 <img width="1715" height="611" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
 </p>
 
-# 🔴 Root Cause
-
-## Command-Line Evidence
-- powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\pwncrypt.ps1
-- Execution policy bypass allowed the malicious script to run without restriction.
-
-- InitiatingProcessFileName = powershell.exe
-- Command line showing:  ExecutionPolicy Bypass and pwncrypt.ps1 script reference
-- Elevated file modification rates indicate automated encryption activity consistent with ransomware behavior.
-- File events reveal PowerShell as the initiating process, confirming script-based ransomware execution.
-
 ---
 
 ## Attack Timeline – Full Lifecycle
@@ -195,9 +184,24 @@ Detect data exfiltration or beaconing
 
 ---
 
+⚠️ Key Findings
+- Suspicious process activity observed around the target timeframe
+- Indicators of defense evasion, including shadow copy deletion
+- Abnormal spike in file modifications consistent with encryption behavior
+- Potential ransom note artifacts detected
+- Signs of lateral movement across systems
+- External network connections suggest possible attacker communication
 
+---
 
+💥 Impact Assessment
+Category	Impact Level	Notes
+Endpoint Systems	High	Multiple devices show suspicious activity
+Data Integrity	High	Likely file encryption or tampering
+User Accounts	Medium	Possible credential compromise
+Network Security	Medium	External communication observed
 
+---
 
 💡 Identify the Device
 
@@ -258,8 +262,64 @@ The investigation followed a structured evidence-based approach:
 
 ---
 
+# 🔴 Root Cause
+
+## Command-Line Evidence
+- powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\pwncrypt.ps1
+- Execution policy bypass allowed the malicious script to run without restriction.
+
+- InitiatingProcessFileName = powershell.exe
+- Command line showing:  ExecutionPolicy Bypass and pwncrypt.ps1 script reference
+- Elevated file modification rates indicate automated encryption activity consistent with ransomware behavior.
+- File events reveal PowerShell as the initiating process, confirming script-based ransomware execution.
 ## Future Preventitive Measurses
 This incident highlights a common modern attack pattern:
 - Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
 - Detection strategies must therefore prioritize behavioral monitoring over static indicators.
 - Strengthen MFA detection and action
+
+---
+
+🧯 Recommendations
+Immediate Actions
+Isolate affected endpoints
+Disable compromised accounts
+Block malicious IPs and domains
+Initiate incident response procedures
+
+---
+
+🧯 Recommendations
+Immediate Actions
+Isolate affected endpoints
+Disable compromised accounts
+Block malicious IPs and domains
+Initiate incident response procedures
+
+---
+
+Preventive Measures
+Enforce Multi-Factor Authentication (MFA)
+Apply least privilege access controls
+Regularly back up critical data (offline backups preferred)
+Patch vulnerabilities and update systems
+
+---
+
+📈 Lessons Learned
+Earlier detection of destructive commands could reduce impact
+Monitoring file activity spikes is critical for ransomware detection
+Centralized logging significantly improves investigation speed
+Detection rules should focus on behavior, not just signatures
+
+---
+
+🧾 Conclusion
+
+This investigation revealed multiple indicators consistent with ransomware activity, including process execution patterns, file system changes, and possible attacker movement across the network.
+
+While full confirmation of encryption depends on additional forensic validation, the observed behaviors strongly suggest ransomware impact or pre-encryption staging.
+
+Strengthening detection logic and response readiness will significantly reduce risk in future incidents.
+
+
