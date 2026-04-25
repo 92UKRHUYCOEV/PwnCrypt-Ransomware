@@ -98,7 +98,7 @@ The following MDE tables were used:
 
 ---
 
-## 🔍 Investigation Steps
+## 🔍 Detection Logic
 ```markdown
 Purpose: Identify first and last observed ransomware file activity
 Reviewed process execution within the suspected timeframe to establish initial and final indicators.
@@ -131,6 +131,9 @@ activity commonly observed in ransomware attacks.
 
 ```kql
 DeviceProcessEvents
+| where ProcessCommandLine contains "pwncrypt"
+   or ProcessCommandLine contains "ExecutionPolicy Bypass"
+| where DeviceName == "windows-target-"
 | where ProcessCommandLine has_any (
     "vssadmin delete shadows",
     "wbadmin delete catalog",
@@ -155,37 +158,107 @@ DeviceProcessEvents
 
 ---
 
-3. File Modification and Encryption Behavior
-Ransomware often performs mass file writes or renames.
-
+## 🔍 File Modification and Encryption Behavior
+```markdown
+Ransomware typically performs large-scale file operations, including rapid file writes, renames,
+and extension changes, resulting in abnormal spikes in file system activity.
+These patterns are indicative of automated encryption processes and can be used
+as a key behavioral indicator of ransomware execution
+```kql
 DeviceFileEvents
+| where DeviceName == "windows-target-"
 | where ActionType in ("FileCreated", "FileModified", "FileRenamed")
 | summarize count() by DeviceName, bin(Timestamp, 5m)
 | order by Timestamp desc
+```
+<img width="567" height="494" alt="image" src="https://github.com/user-attachments/assets/304115ad-fe3b-429e-a789-fd9463d4887e" />
 
-🔎 Indicators:
-Sudden spike in file activity
-Multiple file extensions changed
-Creation of ransom notes
+🔎 Indicators include elevated file activity, mass file renaming, consistent with ransomware execution.
 
 ---
 
-4. Identify Ransom Note Artifacts
+## 🔍 Detect ransom note creation
+```markdown
 DeviceFileEvents
-| where FileName has_any ("README", "DECRYPT", "RECOVER", "HELP")
+| where TimeGenerated between (datetime(2026-02-25 21:00:00) .. datetime(2026-02-26 00:00:00))
+| where DeviceName == "windows-target-"
+| where ActionType == "FileCreated"
+| where FileName has_any ("readme", "decrypt", "recover", "instruction")
+| where FileName endswith ".txt" or FileName endswith ".html"
+| project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessFileName
 | order by Timestamp desc
+```
+<img width="399" height="58" alt="image" src="https://github.com/user-attachments/assets/75a7b552-f1a1-4b03-9a1b-781aa9de2b38" />
 
-🔎 Purpose:
-Detect ransom notes dropped by attackers
-Confirm encryption phase occurred
+🔎 Detect Ransom note was not created by attackers
 
 ---
 
-5. Check for Lateral Movement
+## 🔍 Evidence of encryption spreading
+```markdown
+// Encryption Confirmation
+let ransomwareExtension = "pwncrypt";
+DeviceFileEvents
+| where DeviceName == "windows-target-"
+| where FileName contains ransomwareExtension
+| summarize 
+    FileCount = count(),
+    FirstSeen = min(Timestamp),
+    LastSeen  = max(Timestamp),
+    AffectedFolders = dcount(FolderPath)
+    by DeviceName, InitiatingProcessFileName
+| where FileCount > 20   // threshold for mass activity (adjust if needed)
+| project 
+    DeviceName,
+    InitiatingProcessFileName,
+    FileCount,
+    AffectedFolders,
+    FirstSeen,
+    LastSeen,
+    Duration = LastSeen - FirstSeen
+| order by FileCount desc
+```
+<img width="1316" height="354" alt="image" src="https://github.com/user-attachments/assets/ff665a3d-de12-4369-b148-d484a981cec5" />
+
+---
+
+🔎 Confirm encryption phase occurred -> Encryption = mass file changes + new extensions + rapid activity
+
+---
+
+## 🔍Check for Lateral Movement
+
+Lateral movement is the phase where an attacker, after initial access, moves between systems to expand control, 
+access more data, and position for impact (e.g., ransomware). In most real incidents, the damage happens after 
+lateral movement—not at initial access. This sits between Initial Access → Ransomware Execution.
+
+I detect lateral movement by identifying account reuse across multiple devices, 
+remote execution activity, and administrative tool usage within a short timeframe.
+
+```markdown
+// Identify Account Reuse Across Devices
+DeviceProcessEvents
+| summarize DeviceCount = dcount(DeviceName) by AccountName
+| where DeviceCount > 2
+<img width="294" height="477" alt="image" src="https://github.com/user-attachments/assets/5c6f1412-44bd-438d-957b-f142dc27304e" />
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 DeviceLogonEvents
 | where LogonType in ("RemoteInteractive", "Network")
 | summarize count() by AccountName, DeviceName
 | order by count_ desc
+<img width="511" height="496" alt="image" src="https://github.com/user-attachments/assets/56de710a-7543-4e7a-8432-0903746d125c" />
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+// Admin Tool Abuse (LOLBins) Admin Tool Abuse (LOLBins)
+DeviceProcessEvents
+| where FileName in~ ("psexec.exe", "wmic.exe", "powershell.exe", "cmd.exe")
+| where ProcessCommandLine contains "pwncrypt.ps1"
+| project Timestamp, DeviceName, AccountName, ProcessCommandLine
+| order by Timestamp desc
+<img width="2029" height="500" alt="image" src="https://github.com/user-attachments/assets/33572139-c6c9-4383-883e-f56a64f7e13e" />
+
+```
 
 🔎 Purpose:
 Identify compromised accounts
