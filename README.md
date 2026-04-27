@@ -232,50 +232,86 @@ Lateral movement is the phase where an attacker, after initial access, moves bet
 access more data, and position for impact (e.g., ransomware). In most real incidents, the damage happens after 
 lateral movement—not at initial access. This sits between Initial Access → Ransomware Execution.
 
-I detect lateral movement by identifying account reuse across multiple devices, 
-remote execution activity, and administrative tool usage within a short timeframe.
+I detect lateral movement by identifying account reuse across multiple devices, remote execution activity, and administrative tool usage within a short timeframe.
 
+Identify Account Reuse Across Devices
 ```markdown
-// Identify Account Reuse Across Devices
 DeviceProcessEvents
 | summarize DeviceCount = dcount(DeviceName) by AccountName
 | where DeviceCount > 2
+```
 <img width="294" height="477" alt="image" src="https://github.com/user-attachments/assets/5c6f1412-44bd-438d-957b-f142dc27304e" />
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
+```markdown
 DeviceLogonEvents
 | where LogonType in ("RemoteInteractive", "Network")
 | summarize count() by AccountName, DeviceName
 | order by count_ desc
+```
 <img width="511" height="496" alt="image" src="https://github.com/user-attachments/assets/56de710a-7543-4e7a-8432-0903746d125c" />
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
-// Admin Tool Abuse (LOLBins) Admin Tool Abuse (LOLBins)
+
+Admin Tool Abuse (LOLBins)
+```markdown
 DeviceProcessEvents
 | where FileName in~ ("psexec.exe", "wmic.exe", "powershell.exe", "cmd.exe")
 | where ProcessCommandLine contains "pwncrypt.ps1"
 | project Timestamp, DeviceName, AccountName, ProcessCommandLine
 | order by Timestamp desc
+```
 <img width="2029" height="500" alt="image" src="https://github.com/user-attachments/assets/33572139-c6c9-4383-883e-f56a64f7e13e" />
 
-```
-
 🔎 Purpose:
-Identify compromised accounts
-Detect spread across systems
+- Identify compromised accounts
+- Detect spread across systems
 
 ---
 
-6. Network Communication Analysis
+## 🔍 Network Communication Analysis (Lateral Movement)
+Identify Internal Communication (Lateral Movement)
+```Markdown
 DeviceNetworkEvents
-| summarize count() by RemoteIP, DeviceName
-| order by count_ desc
-
-🔎 Purpose:
-Identify command-and-control (C2) communication
-Detect data exfiltration or beaconing
+| where RemoteIPType == "Private"
+| summarize ConnectionCount = count() by DeviceName, RemoteIP
+| order by ConnectionCount desc
+```
+<img width="694" height="558" alt="image" src="https://github.com/user-attachments/assets/68e9ddfb-c6b9-49b3-9312-26d42d401fff" />
+👉 Detects:
+- Device-to-device communication inside the network 
+- Potential pivoting between systems
 
 ---
+
+Detect External Connections (Potential C2) 
+```markdown
+DeviceNetworkEvents
+| where RemoteIPType == "Public"
+| summarize ConnectionCount = count() by RemoteIP
+| order by ConnectionCount desc
+```
+<img width="304" height="371" alt="image" src="https://github.com/user-attachments/assets/403b8afb-e718-42db-91e4-0d28f507e259" />
+👉 Detects:
+- Communication to external IPs
+- Identify command-and-control (C2) communication
+- Detect data exfiltration or beaconing
+
+
+
+
+
+
+
+
+
+
+
+<img width="514" height="450" alt="image" src="https://github.com/user-attachments/assets/a4a4389d-1f5b-48b4-b50e-6b5c5d08f64d" />
+
+👉 Purpose:
+
+
+---
+
 
 ⚠️ Key Findings
 - Suspicious process activity observed around the target timeframe
