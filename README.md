@@ -38,14 +38,14 @@ Ransomware attacks typically follow a structured lifecycle:
 This investigation focuses primarily on execution, impact, and evidence of encryption behavior.
 
 
-## PwnCrypt Attack Chain (Visual Overview)
+## 👀 PwnCrypt Attack Chain (Visual Overview)
 <p align="center">
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/4e73dd10-4eb7-41e5-a783-5d5e9b38fe1c" />
 </p>
 
 ---
 
-## Investigation Flow Diagram
+## 🗝️ Investigation Flow Diagram
 <p align="center">
 <img width="1024" height="1536" alt="PwnCrypt Ransomware TH_contrast adjst_04-23-26" src="https://github.com/user-attachments/assets/69ce393d-423a-488d-8113-eb3250eb5e12" />
 </p>
@@ -59,14 +59,14 @@ This attack demonstrates how legitimate tools (PowerShell) can be abused to exec
 
 ---
 
-### 🔴Attack-generated files with the .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
+## 📢 Attack-generated files with the .pwncrypt extension confirm encryption activity consistent with ransomware behavior.
 <p align="center">
 <img width="1715" height="611" alt="image" src="https://github.com/user-attachments/assets/3e11b28f-3c9e-45d9-9cd8-c41955e83d70" />
 </p>
 
 ---
 
-## Attack Timeline – Full Lifecycle
+## 🕑 Attack Timeline – Full Lifecycle
 
 | Time | Stage | Event | Data Source | Evidence |
 |:-----|:------|:------|:------------|:---------|
@@ -126,10 +126,10 @@ including shadow copy deletion and backup removal. The presence of PowerShell
 and command-line activity further indicates the use of legitimate tools to
 execute malicious actions. These behaviors strongly correlate with pre-encryption
 activity commonly observed in ransomware attacks.
+```
 
-### 🔍 KQL Query
-
-```kql
+## 🔍 KQL Query
+```markdown
 DeviceProcessEvents
 | where ProcessCommandLine contains "pwncrypt"
    or ProcessCommandLine contains "ExecutionPolicy Bypass"
@@ -217,7 +217,7 @@ lateral movement—not at initial access. This sits between Initial Access → R
 
 I detect lateral movement by identifying account reuse across multiple devices, remote execution activity, and administrative tool usage within a short timeframe.
 
-Identify Account Reuse Across Devices
+## 🚧 Identify Account Reuse Across Devices
 ```markdown
 DeviceProcessEvents
 | summarize DeviceCount = dcount(DeviceName) by AccountName
@@ -234,7 +234,7 @@ DeviceLogonEvents
 <img width="511" height="496" alt="image" src="https://github.com/user-attachments/assets/56de710a-7543-4e7a-8432-0903746d125c" />
 
 
-Admin Tool Abuse (LOLBins)
+## 🤖 Admin Tool Abuse (LOLBins)
 ```markdown
 DeviceProcessEvents
 | where FileName in~ ("psexec.exe", "wmic.exe", "powershell.exe", "cmd.exe")
@@ -250,7 +250,7 @@ DeviceProcessEvents
 
 ---
 
-## 🔍 Network Communication Analysis (Lateral Movement)
+## 🪓 Network Communication Analysis (Lateral Movement)
 Identify Internal Communication (Lateral Movement)
 ```Markdown
 DeviceNetworkEvents
@@ -259,13 +259,14 @@ DeviceNetworkEvents
 | order by ConnectionCount desc
 ```
 <img width="694" height="558" alt="image" src="https://github.com/user-attachments/assets/68e9ddfb-c6b9-49b3-9312-26d42d401fff" />
+
 👉 Detects:
 - Device-to-device communication inside the network 
 - Potential pivoting between systems
 
 ---
 
-Detect External Connections (Potential C2) 
+## 🪓 Detect External Connections (Potential C2) 
 ```markdown
 DeviceNetworkEvents
 | where RemoteIPType == "Public"
@@ -308,8 +309,6 @@ DeviceNetworkEvents
 ---
 
 💡 Confirm Timeline of Infection    
-// where TimeGenerated between (datetime(2026-02-25 21:00:00) .. datetime(2026-02-26 00:00:00))
-
 <img width="503" height="200" alt="image" src="https://github.com/user-attachments/assets/9b501cdb-42f1-4852-b956-2a16d323bf04" />
 
 The provided timestamp in the lab instructions did not align with the dataset. Instead, timestamps were derived directly from observed .pwncrypt file events. Using these timestamps, process events were correlated, confirming that powershell.exe executed the ransomware script within the observed timeframe.
@@ -370,10 +369,10 @@ This incident highlights a common modern attack pattern:
 
 ## 🧯 Recommendations
 Immediate Actions
-Isolate affected endpoints
-Disable compromised accounts
-Block malicious IPs and domains
-Initiate incident response procedures
+* Isolate affected endpoints
+* Disable compromised accounts
+* Block malicious IPs and domains
+* Initiate incident response procedures
 
 ---
 
