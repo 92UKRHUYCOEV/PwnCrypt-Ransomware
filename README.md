@@ -282,7 +282,7 @@ DeviceNetworkEvents
 ---
 
 ## 🪓 Detect Ransom Note File Dropped - 
-Most ransomware attackers drops a ransom note file
+When a ransom note appears, you’re past “early warning” and into confirmed impact. The priority shifts to containment, preservation of evidence, and recovery—in that order. 
 
 ```markdown
 DeviceFileEvents
@@ -291,12 +291,59 @@ DeviceFileEvents
 | project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessFileName
 | order by Timestamp desc
 ```
-<img width="1789" height="258" alt="image" src="https://github.com/user-attachments/assets/63244a50-8268-411b-be8a-0b4482bcf6c6" />
+<img width="1788" height="250" alt="image" src="https://github.com/user-attachments/assets/13ca2ad9-7617-4e75-8dc5-3fb17e2be30a" />
 
+🚨 Immediate Actions (First Minutes)
+1) Isolate the affected system
+* Remove from network (EDR isolation or pull the cable/Wi-Fi)
+* Do not power it off unless encryption is still actively spreading and you can’t isolate
 
+2) Stop the blast radius
+* Disable shared drives / file shares if multiple systems are involved
+* Temporarily block SMB/RDP if lateral movement is suspected
+
+3) Preserve evidence
+### Don’t delete the ransom note or files
+* Capture:
+** Process list
+** Network connections
+** Logged-on users
+** In MDE, collect a live response package
+
+---
+🔎 Triage & Verification (First Hour)
+* Confirm what happened
+* Which hosts are affected?
+* What files are encrypted (extensions, paths)?
+* Is encryption still ongoing?
+
+// Other hosts with same extension
+```markdown
+DeviceFileEvents
+| where FileName has "pwncrypt"
+| summarize count() by DeviceName
+```
+<img width="298" height="528" alt="image" src="https://github.com/user-attachments/assets/9767acee-9caa-4fb5-82a4-bf0c810e8701" />
 
 ---
 
+// Ransom note artifacts
+DeviceFileEvents
+```markdown
+DeviceFileEvents
+| where Timestamp between (datetime(2025-12-09T00:00:00Z) .. datetime(2025-12-23T23:59:59Z))
+| where FileName has_any ("README","DECRYPT","INSTRUCTIONS")
+```
+<img width="1408" height="314" alt="image" src="https://github.com/user-attachments/assets/9aaf0b9f-afbe-4307-bc96-9cf7b1c475f6" />
+
+
+// Suspected Execution Method
+DeviceProcessEvents
+| where Timestamp between (datetime(2025-12-09T00:00:00Z) .. datetime(2025-12-23T23:59:59Z))
+| where ProcessCommandLine has_any ("ExecutionPolicy Bypass",".ps1","vssadmin")
+
+
+---
 ⚠️ Key Findings
 - Suspicious process activity observed around the target timeframe
 - Indicators of defense evasion, including shadow copy deletion
@@ -307,6 +354,10 @@ DeviceFileEvents
 - Strong evidence that a Ransom Note was dropped
 
 ---
+
+
+
+
 
 💥 Impact Assessment
 | Category           | Impact | Level  | Notes                                           |
