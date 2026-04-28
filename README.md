@@ -177,23 +177,6 @@ DeviceFileEvents
 
 ---
 
-## 🔍 Detect ransom note creation
-```markdown
-DeviceFileEvents
-| where TimeGenerated between (datetime(2026-02-25 21:00:00) .. datetime(2026-02-26 00:00:00))
-| where DeviceName == "windows-target-"
-| where ActionType == "FileCreated"
-| where FileName has_any ("readme", "decrypt", "recover", "instruction")
-| where FileName endswith ".txt" or FileName endswith ".html"
-| project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessFileName
-| order by Timestamp desc
-```
-<img width="399" height="58" alt="image" src="https://github.com/user-attachments/assets/75a7b552-f1a1-4b03-9a1b-781aa9de2b38" />
-
-🔎 Detect Ransom note was not created by attackers
-
----
-
 ## 🔍 Evidence of encryption spreading
 ```markdown
 // Encryption Confirmation
@@ -295,23 +278,7 @@ DeviceNetworkEvents
 - Identify command-and-control (C2) communication
 - Detect data exfiltration or beaconing
 
-
-
-
-
-
-
-
-
-
-
-<img width="514" height="450" alt="image" src="https://github.com/user-attachments/assets/a4a4389d-1f5b-48b4-b50e-6b5c5d08f64d" />
-
-👉 Purpose:
-
-
 ---
-
 
 ⚠️ Key Findings
 - Suspicious process activity observed around the target timeframe
@@ -324,19 +291,12 @@ DeviceNetworkEvents
 ---
 
 💥 Impact Assessment
-Category	Impact Level	Notes
-Endpoint Systems	High	Multiple devices show suspicious activity
-Data Integrity	High	Likely file encryption or tampering
-User Accounts	Medium	Possible credential compromise
-Network Security	Medium	External communication observed
-
----
-
-💡 Identify the Device
-
-<p align="center">
-<img width="633" height="200" alt="image" src="https://github.com/user-attachments/assets/7852e423-e3f2-4d9b-8197-a78887c4f31e" />
-</p>
+| Category           | Impact | Level  | Notes                                           |
+|--------------------|--------|--------|-------------------------------------------------|
+| Endpoint Systems   | High   | High   | Multiple devices show suspicious activity       |
+| Data Integrity     | High   | High   | Likely file encryption or tampering             |
+| User Accounts      | Medium | Medium | Possible credential compromise                  |
+| Network Security   | Medium | Medium | External communication observed                 |
 
 ---
 
@@ -392,16 +352,15 @@ The investigation followed a structured evidence-based approach:
 ---
 
 # 🔴 Root Cause
-
-## Command-Line Evidence
+## 🔍 Command-Line Evidence
 - powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\pwncrypt.ps1
 - Execution policy bypass allowed the malicious script to run without restriction.
-
 - InitiatingProcessFileName = powershell.exe
 - Command line showing:  ExecutionPolicy Bypass and pwncrypt.ps1 script reference
 - Elevated file modification rates indicate automated encryption activity consistent with ransomware behavior.
 - File events reveal PowerShell as the initiating process, confirming script-based ransomware execution.
-## Future Preventitive Measurses
+
+## 🔍 Future Preventitive Measurses
 This incident highlights a common modern attack pattern:
 - Legitimate administrative tools (PowerShell) are abused to execute malicious payloads, bypass controls, and evade traditional signature-based detection.
 - Detection strategies must therefore prioritize behavioral monitoring over static indicators.
@@ -409,7 +368,7 @@ This incident highlights a common modern attack pattern:
 
 ---
 
-🧯 Recommendations
+## 🧯 Recommendations
 Immediate Actions
 Isolate affected endpoints
 Disable compromised accounts
@@ -418,32 +377,23 @@ Initiate incident response procedures
 
 ---
 
-🧯 Recommendations
-Immediate Actions
-Isolate affected endpoints
-Disable compromised accounts
-Block malicious IPs and domains
-Initiate incident response procedures
+## 🔍 Preventive Measures
+* Enforce Multi-Factor Authentication (MFA)
+* Apply least privilege access controls
+* Regularly back up critical data (offline backups preferred)
+* Patch vulnerabilities and update systems
 
 ---
 
-Preventive Measures
-Enforce Multi-Factor Authentication (MFA)
-Apply least privilege access controls
-Regularly back up critical data (offline backups preferred)
-Patch vulnerabilities and update systems
+## 📈 Lessons Learned
+* Earlier detection of destructive commands could reduce impact
+* Monitoring file activity spikes is critical for ransomware detection
+* Centralized logging significantly improves investigation speed
+* Detection rules should focus on behavior, not just signatures
 
 ---
 
-📈 Lessons Learned
-Earlier detection of destructive commands could reduce impact
-Monitoring file activity spikes is critical for ransomware detection
-Centralized logging significantly improves investigation speed
-Detection rules should focus on behavior, not just signatures
-
----
-
-🧾 Conclusion
+## 🚨 Conclusion
 
 This investigation revealed multiple indicators consistent with ransomware activity, including process execution patterns, file system changes, and possible attacker movement across the network.
 
