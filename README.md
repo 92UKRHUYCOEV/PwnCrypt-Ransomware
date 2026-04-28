@@ -281,6 +281,22 @@ DeviceNetworkEvents
 
 ---
 
+## 🪓 Detect Ransom Note File Dropped - 
+Most ransomware attackers drops a ransom note file
+
+```markdown
+DeviceFileEvents
+| where Timestamp between (datetime(2025-12-09T00:00:00Z) .. datetime(2025-12-23T23:59:59Z))
+| where FileName has_any ("README", "DECRYPT", "RECOVER", "HOW_TO_RESTORE")
+| project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessFileName
+| order by Timestamp desc
+```
+<img width="1789" height="258" alt="image" src="https://github.com/user-attachments/assets/63244a50-8268-411b-be8a-0b4482bcf6c6" />
+
+
+
+---
+
 ⚠️ Key Findings
 - Suspicious process activity observed around the target timeframe
 - Indicators of defense evasion, including shadow copy deletion
@@ -288,6 +304,7 @@ DeviceNetworkEvents
 - Potential ransom note artifacts detected
 - Signs of lateral movement across systems
 - External network connections suggest possible attacker communication
+- Strong evidence that a Ransom Note was dropped
 
 ---
 
@@ -328,7 +345,7 @@ The investigation followed a structured evidence-based approach:
 🔗🔴 Why did this happen?
 	• Identity → MFA not enforced
 	• Lateral → valid credentials abused
- 	• Ransomware → PowerShell script execution
+ 	• Ransomware → PowerShell script with -ExecutionPolicy -Bypass
 
 ---
 
@@ -350,14 +367,16 @@ The investigation followed a structured evidence-based approach:
 
 ---
 
-# 🔴 Root Cause
-## 🔍 Command-Line Evidence
+## 🔴 Root Cause
+#### 🔍 Command-Line Evidence
 - powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\pwncrypt.ps1
 - Execution policy bypass allowed the malicious script to run without restriction.
 - InitiatingProcessFileName = powershell.exe
 - Command line showing:  ExecutionPolicy Bypass and pwncrypt.ps1 script reference
 - Elevated file modification rates indicate automated encryption activity consistent with ransomware behavior.
 - File events reveal PowerShell as the initiating process, confirming script-based ransomware execution.
+
+---
 
 ## 🔍 Future Preventitive Measurses
 This incident highlights a common modern attack pattern:
