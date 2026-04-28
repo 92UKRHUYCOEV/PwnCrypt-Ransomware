@@ -328,7 +328,6 @@ DeviceFileEvents
 ---
 
 // Ransom note artifacts
-DeviceFileEvents
 ```markdown
 DeviceFileEvents
 | where Timestamp between (datetime(2025-12-09T00:00:00Z) .. datetime(2025-12-23T23:59:59Z))
@@ -336,14 +335,15 @@ DeviceFileEvents
 ```
 <img width="1408" height="314" alt="image" src="https://github.com/user-attachments/assets/9aaf0b9f-afbe-4307-bc96-9cf7b1c475f6" />
 
+---
 
 // Suspected Execution Method
 DeviceProcessEvents
 | where Timestamp between (datetime(2025-12-09T00:00:00Z) .. datetime(2025-12-23T23:59:59Z))
 | where ProcessCommandLine has_any ("ExecutionPolicy Bypass",".ps1","vssadmin")
 
-
 ---
+
 ⚠️ Key Findings
 - Suspicious process activity observed around the target timeframe
 - Indicators of defense evasion, including shadow copy deletion
