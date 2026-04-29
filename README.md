@@ -276,7 +276,7 @@ DeviceNetworkEvents
 
 ---
 
-## 🪓 Detect Ransom Note File Dropped - 
+## 🪓 Detect Ransom Note File Dropped
 When a ransom note appears, you’re past “early warning” and into confirmed impact. The priority shifts to containment, preservation of evidence, and recovery—in that order. 
 
 ```markdown
@@ -288,22 +288,23 @@ DeviceFileEvents
 ```
 <img width="1788" height="250" alt="image" src="https://github.com/user-attachments/assets/13ca2ad9-7617-4e75-8dc5-3fb17e2be30a" />
 
+---
+
 🚨 Immediate Actions (First Minutes)
 1) Isolate the affected system
-* Remove from network (EDR isolation or pull the cable/Wi-Fi)
-* Do not power it off unless encryption is still actively spreading and you can’t isolate
+	- Remove from network (EDR isolation or pull the cable/Wi-Fi)
+	- Do not power it off unless encryption is still actively spreading and you can’t isolate
 
 2) Stop the blast radius
-* Disable shared drives / file shares if multiple systems are involved
-* Temporarily block SMB/RDP if lateral movement is suspected
+	- Disable shared drives / file shares if multiple systems are involved
+	- Temporarily block SMB/RDP if lateral movement is suspected
 
-3) Preserve evidence
-### Don’t delete the ransom note or files
-* Capture:
-** Process list
-** Network connections
-** Logged-on users
-** In MDE, collect a live response package
+3) Preserve evidence (Don’t delete the ransom note or files)
+	* Capture:
+		** Process list
+		** Network connections
+		** Logged-on users
+		** In MDE, collect a live response package
 
 ---
 🔎 Triage & Verification (First Hour)
@@ -323,6 +324,8 @@ DeviceFileEvents
 ---
 
 // Ransom note artifacts
+Displays a message to the victim after encryption
+Provides instructions for payment and recovery
 ```markdown
 DeviceFileEvents
 | where Timestamp between (datetime(2025-12-09T00:00:00Z) .. datetime(2025-12-23T23:59:59Z))
@@ -462,11 +465,7 @@ This investigation revealed multiple indicators consistent with ransomware activ
 
 ✍️ Author Notes
 
-This report represents a structured threat hunting workflow designed to simulate real-world ransomware detection and analysis using Microsoft Defender for Endpoint.
-
-While full confirmation of encryption depends on additional forensic validation, the observed behaviors strongly suggest ransomware impact or pre-encryption staging.
-
-Strengthening detection logic and response readiness will significantly reduce risk in future incidents.
+This report represents a structured threat hunting workflow designed to simulate real-world ransomware detection and analysis using Microsoft Defender for Endpoint. While full confirmation of encryption depends on additional forensic validation, the observed behaviors strongly suggest ransomware impact or pre-encryption staging. Strengthening detection logic and response readiness will significantly reduce risk in future incidents.
 
 ---
 
