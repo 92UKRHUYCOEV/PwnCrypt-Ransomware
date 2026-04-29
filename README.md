@@ -102,9 +102,6 @@ The following MDE tables were used:
 ```markdown
 Purpose: Identify first and last observed ransomware file activity
 Reviewed process execution within the suspected timeframe to establish initial and final indicators.
-
-### 🔍 KQL Query
-
 ```kql
 DeviceFileEvents
 | where FileName contains "pwncrypt"
@@ -120,13 +117,11 @@ DeviceFileEvents
 ---
 
 ## 🔍 Look for Common Ransomware Indicators
-```markdown
 Process execution analysis identified commands associated with ransomware staging,
 including shadow copy deletion and backup removal. The presence of PowerShell
 and command-line activity further indicates the use of legitimate tools to
 execute malicious actions. These behaviors strongly correlate with pre-encryption
 activity commonly observed in ransomware attacks.
-```
 
 ## 🔍 KQL Query
 ```markdown
@@ -338,10 +333,11 @@ DeviceFileEvents
 ---
 
 // Suspected Execution Method
+```markdown
 DeviceProcessEvents
 | where Timestamp between (datetime(2025-12-09T00:00:00Z) .. datetime(2025-12-23T23:59:59Z))
 | where ProcessCommandLine has_any ("ExecutionPolicy Bypass",".ps1","vssadmin")
-
+```
 ---
 
 ⚠️ Key Findings
@@ -354,10 +350,6 @@ DeviceProcessEvents
 - Strong evidence that a Ransom Note was dropped
 
 ---
-
-
-
-
 
 💥 Impact Assessment
 | Category           | Impact | Level  | Notes                                           |
